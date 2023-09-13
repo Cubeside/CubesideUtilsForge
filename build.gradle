@@ -1,0 +1,66 @@
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+version = '1.0'
+group = 'de.cubeside.cubesideutils' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'cubesideutilsforge'
+
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+minecraft {
+    mappings channel: 'official', version: '1.19.2'
+
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
+}
+
+repositories {
+    mavenLocal()
+    maven { url = 'https://www.iani.de/nexus/content/groups/public' }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.19.2-43.2.23'
+
+    compileOnly 'net.luckperms:api:5.4'
+    implementation 'de.iani.cubeside:CubesideUtilsCore:1.16-SNAPSHOT'
+}
+
+jar.finalizedBy('reobfJar')
+// publish.dependsOn('reobfJar')
+
+reobf {
+    shadowJar {}
+}
+
+shadowJar {
+    // archiveBaseName.set('cubesideutilsforge')
+    archiveClassifier.set('shaded')
+
+    dependencies {
+        include(dependency('de.iani.cubeside:CubesideUtilsCore'))
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
