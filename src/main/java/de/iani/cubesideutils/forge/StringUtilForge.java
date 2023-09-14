@@ -16,7 +16,7 @@ public class StringUtilForge {
     public static final char COLOR_CHAR = '§';
     public static final Pattern COLOR_CHAR_PATTERN = Pattern.compile("\\" + COLOR_CHAR);
     public static final Pattern COLOR_CODES_PATTERN = Pattern.compile("\\" + COLOR_CHAR + "([0-9a-fk-or]|(x(" + COLOR_CHAR + "[0-9a-f]){6}))", Pattern.CASE_INSENSITIVE);
-    private static final Pattern URL = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
+    private static final Pattern URL_PATTERN = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
 
     public static ArrayList<String> copyPartialMatches(String token, Collection<String> unfiltered) {
         return unfiltered.stream().filter(s -> startsWithIgnoreCase(s, token)).collect(Collectors.toCollection(() -> new ArrayList<>()));
@@ -35,7 +35,7 @@ public class StringUtilForge {
         Style style = Style.EMPTY;
         Style newStyle = style;
         StringBuilder builder = new StringBuilder();
-        Matcher urlMatcher = parseUrls ? URL.matcher(text) : null;
+        Matcher urlMatcher = parseUrls ? URL_PATTERN.matcher(text) : null;
 
         int len = text.length();
         for (int i = 0; i < len; i++) {
