@@ -3,17 +3,22 @@ package de.iani.cubesideutils.forge.commands;
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.ArgumentCommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import de.iani.cubesideutils.forge.CubesideUtilsForgeMod;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import org.apache.commons.lang3.StringUtils;
 
 public class CommandUtil {
@@ -26,6 +31,12 @@ public class CommandUtil {
         Preconditions.checkNotNull(command, "dispatcher");
         Preconditions.checkNotNull(command, "command");
         Preconditions.checkNotNull(handler, "handler");
+
+        CommandAdapter adapter = new CommandAdapter(handler);
+        LiteralCommandNode<CommandSourceStack> commandNode = Commands.literal(command).requires(adapter).executes(adapter).build();
+        ArgumentCommandNode<CommandSourceStack, String> defaultArgs = RequiredArgumentBuilder.<CommandSourceStack, String> argument("args", StringArgumentType.greedyString()).suggests(adapter).executes(adapter).build();
+        commandNode.addChild(defaultArgs);
+        dispatcher.getRoot().addChild(commandNode);
     }
 
     public static class CommandAdapter implements Predicate<CommandSourceStack>, Command<CommandSourceStack>, SuggestionProvider<CommandSourceStack> {
