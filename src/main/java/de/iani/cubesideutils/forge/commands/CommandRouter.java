@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BaseCommandBlock;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class CommandRouter extends AbstractCommandRouter<SubCommand, CommandSourceStack> implements CommandHandler {
 
@@ -89,10 +90,15 @@ public class CommandRouter extends AbstractCommandRouter<SubCommand, CommandSour
                 }
             }
         }
-        if (options != null) {
-            optionsList = StringUtilForge.copyPartialMatches(partial, options);
-            Collections.sort(optionsList);
+        if (options == null) {
+            options = new ArrayList<>();
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                options.add(player.getName().getString());
+            }
         }
+
+        optionsList = StringUtilForge.copyPartialMatches(partial, options);
+        Collections.sort(optionsList);
         return optionsList;
     }
 

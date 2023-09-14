@@ -83,11 +83,11 @@ public class CommandUtil {
                 CubesideUtilsForgeMod.LOGGER.error("Unhandled exception in tab complete", ex);
             }
             builder = builder.createOffset(builder.getInput().lastIndexOf(' ') + 1);
-
-            for (String s : results) {
-                builder.suggest(s);
+            if (results != null) {
+                for (String s : results) {
+                    builder.suggest(s);
+                }
             }
-
             return builder.buildFuture();
         }
 
