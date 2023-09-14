@@ -30,10 +30,10 @@ dependencies {
 
     compileOnly 'net.luckperms:api:5.4'
     implementation 'de.iani.cubeside:CubesideUtilsCore:1.16-SNAPSHOT'
+    implementation 'com.mysql:mysql-connector-j:8.0.33'
 }
 
 jar.finalizedBy('reobfJar')
-// publish.dependsOn('reobfJar')
 
 reobf {
     shadowJar {}
@@ -45,7 +45,11 @@ shadowJar {
 
     dependencies {
         include(dependency('de.iani.cubeside:CubesideUtilsCore'))
+        include(dependency('com.mysql:mysql-connector-j'))
+        exclude "META-INF/services/java.sql.Driver"
     }
+    
+    relocate 'com.mysql', 'de.iani.cubesideutils.forge.libs.mysql'
 }
 
 publishing {

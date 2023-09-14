@@ -1,6 +1,7 @@
 package de.iani.cubesideutils.forge;
 
 import com.mojang.logging.LogUtils;
+import java.sql.SQLException;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -15,6 +16,13 @@ public class CubesideUtilsForgeMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public CubesideUtilsForgeMod() {
+        LOGGER.info("Registering MySQL driver");
+        try {
+            new com.mysql.cj.jdbc.Driver();
+        } catch (SQLException e) {
+            LOGGER.warn("Could not register MySql driver", e);
+            e.printStackTrace();
+        }
         // ModLoadingContext.get().registerConfig(Type.SERVER, CubesideUtilsForgeConfig.GENERAL_SPEC);
         MinecraftForge.EVENT_BUS.register(this);
     }
