@@ -2,6 +2,7 @@ package de.iani.cubesideutils.forge.permissions;
 
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedPermissionData;
+import net.luckperms.api.util.Tristate;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,7 +52,8 @@ public class PermissionUtil {
         @Override
         public boolean hasPermission(ServerPlayer player, String permission) {
             CachedPermissionData permissionData = LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getPermissionData();
-            return permissionData.checkPermission(permission).asBoolean();
+            Tristate result = permissionData.checkPermission(permission);
+            return result == Tristate.UNDEFINED ? player.hasPermissions(2) : result.asBoolean();
         }
     }
 }
