@@ -1,14 +1,11 @@
 package de.iani.cubesideutils.forge.location;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.Block;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.Nullable;
 
 public class Location {
     private Reference<ServerLevel> level;
