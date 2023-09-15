@@ -1,9 +1,9 @@
 package de.iani.cubesideutils.forge.commands;
 
 import de.iani.cubesideutils.Pair;
+import de.iani.cubesideutils.StringUtilCore;
 import de.iani.cubesideutils.commands.AbstractCommandRouter;
 import de.iani.cubesideutils.commands.ArgsParser;
-import de.iani.cubesideutils.forge.StringUtilForge;
 import de.iani.cubesideutils.forge.commands.exceptions.DisallowsCommandBlockException;
 import de.iani.cubesideutils.forge.commands.exceptions.IllegalSyntaxException;
 import de.iani.cubesideutils.forge.commands.exceptions.InternalCommandException;
@@ -76,7 +76,7 @@ public class CommandRouter extends AbstractCommandRouter<SubCommand, CommandSour
         if (nr == args.length - 1 && currentMap.subCommands != null) {
             for (Entry<String, CommandMap> e : currentMap.subCommands.entrySet()) {
                 String key = e.getKey();
-                if (StringUtilForge.startsWithIgnoreCase(key, partial)) {
+                if (StringUtilCore.startsWithIgnoreCase(key, partial)) {
                     CommandMap subcmd = e.getValue();
                     if (isAnySubCommandDisplayable(sender, subcmd)) {
                         if (sender.source instanceof Player || subcmd.executor == null || !subcmd.executor.requiresPlayer()) {
@@ -97,7 +97,7 @@ public class CommandRouter extends AbstractCommandRouter<SubCommand, CommandSour
             }
         }
 
-        optionsList = StringUtilForge.copyPartialMatches(partial, options);
+        optionsList = StringUtilCore.copyPartialMatches(partial, options);
         Collections.sort(optionsList);
         return optionsList;
     }

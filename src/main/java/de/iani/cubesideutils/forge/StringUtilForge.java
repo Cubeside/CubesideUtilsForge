@@ -1,10 +1,8 @@
 package de.iani.cubesideutils.forge;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -17,14 +15,6 @@ public class StringUtilForge {
     public static final Pattern COLOR_CHAR_PATTERN = Pattern.compile("\\" + COLOR_CHAR);
     public static final Pattern COLOR_CODES_PATTERN = Pattern.compile("\\" + COLOR_CHAR + "([0-9a-fk-or]|(x(" + COLOR_CHAR + "[0-9a-f]){6}))", Pattern.CASE_INSENSITIVE);
     private static final Pattern URL_PATTERN = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
-
-    public static ArrayList<String> copyPartialMatches(String token, Collection<String> unfiltered) {
-        return unfiltered.stream().filter(s -> startsWithIgnoreCase(s, token)).collect(Collectors.toCollection(() -> new ArrayList<>()));
-    }
-
-    public static boolean startsWithIgnoreCase(final String string, final String prefix) {
-        return string.length() >= prefix.length() && string.regionMatches(true, 0, prefix, 0, prefix.length());
-    }
 
     public static Component parseLegacyColoredString(String text) {
         return parseLegacyColoredString(text, false);
