@@ -72,6 +72,10 @@ public class CommandUtil {
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException {
             String commandLine = builder.getInput();
             String[] args = StringUtils.split(commandLine, ' ');
+            if (commandLine.endsWith(" ")) {
+                args = Arrays.copyOfRange(args, 0, args.length + 1);
+                args[args.length - 1] = "";
+            }
             List<String> results = List.of();
             try {
                 if (args.length > 0) {
