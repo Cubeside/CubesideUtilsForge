@@ -44,11 +44,6 @@ public class Location {
         return world;
     }
 
-    @NotNull
-    public Block getBlock() {
-        return getWorld().getBlockState(this.toBlockPos()).getBlock();
-    }
-
     public void setX(double x) {
         this.x = x;
     }
