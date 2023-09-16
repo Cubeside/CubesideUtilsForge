@@ -8,12 +8,9 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 
 public class StringUtilForge {
     public static final char COLOR_CHAR = '§';
-    public static final Pattern COLOR_CHAR_PATTERN = Pattern.compile("\\" + COLOR_CHAR);
-    public static final Pattern COLOR_CODES_PATTERN = Pattern.compile("\\" + COLOR_CHAR + "([0-9a-fk-or]|(x(" + COLOR_CHAR + "[0-9a-f]){6}))", Pattern.CASE_INSENSITIVE);
     private static final Pattern URL_PATTERN = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
 
     public static Component parseLegacyColoredString(String text) {
@@ -110,114 +107,5 @@ public class StringUtilForge {
             }
             return parent;
         }
-    }
-
-    public static String convertColors(String text) {
-        return parseColors(text, false);
-    }
-
-    public static String stripColors(String text) {
-        return parseColors(text, true);
-    }
-
-    private static String parseColors(String text, boolean remove) {
-        if (text == null) {
-            return null;
-        }
-        StringBuilder builder = null;
-        int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char current = text.charAt(i);
-            if (current == '&' && i + 1 < len) {
-                char next = text.charAt(i + 1);
-                // if next is a "&" skip next char
-                // if its a color char replace the "&"
-                if (ChatFormatting.getByCode(next) != null || next == '&' || next == 'x') {
-                    if (builder == null) {
-                        builder = new StringBuilder();
-                        builder.append(text, 0, i);
-                    }
-                    i++;
-                    if (next != '&') {
-                        if (next == 'x') {
-                            TextColor hex = parseHexColor(text, i + 1);
-                            if (hex == null) {
-                                builder.append(current).append(next);
-                            } else {
-                                if (!remove) {
-                                    String hexString = Integer.toString(hex.getValue(), 16);
-                                    builder.append(COLOR_CHAR).append('x');
-                                    int offset = hexString.length() - 6;
-                                    for (int j = 0; j < 6; j++) {
-                                        int charPos = j + offset;
-                                        char c = charPos >= 0 ? hexString.charAt(charPos) : '0';
-                                        builder.append(COLOR_CHAR).append(c);
-                                    }
-                                }
-                                i += 6;
-                            }
-                        } else {
-                            if (!remove) {
-                                builder.append(COLOR_CHAR).append(next);
-                            }
-                        }
-                        continue;
-                    }
-                }
-            }
-            if (builder != null) {
-                builder.append(current);
-            }
-        }
-        return builder == null ? text : builder.toString();
-    }
-
-    public static TextColor parseHexColor(String text, int startIndex) {
-        if (text.length() - startIndex < 6) {
-            return null;
-        }
-        StringBuilder hexString = new StringBuilder("");
-        for (int i = 0; i < 6; i++) {
-            char c = Character.toLowerCase(text.charAt(i + startIndex));
-            if ((c < '0' || c > '9') && (c < 'a' || c > 'f')) {
-                return null;
-            }
-            hexString.append(c);
-        }
-        return TextColor.fromRgb(Integer.parseInt(hexString.toString(), 16));
-    }
-
-    public static String revertColors(String converted) {
-        if (converted == null) {
-            return null;
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < converted.length(); i++) {
-            char c = converted.charAt(i);
-            if (c == COLOR_CHAR) {
-                if (converted.length() > i + 1 && converted.charAt(i + 1) == 'x') {
-                    if (i + 14 > converted.length()) {
-                        builder.append("&");
-                        continue;
-                    }
-                    String hexString = converted.substring(i, i + 14);
-                    if (!COLOR_CODES_PATTERN.matcher(hexString).matches()) {
-                        builder.append("&");
-                        continue;
-                    }
-                    builder.append("&").append(COLOR_CHAR_PATTERN.matcher(hexString).replaceAll(""));
-                    i += 13;
-                    continue;
-                }
-                builder.append("&");
-            } else if (c == '&') {
-                builder.append("&&");
-            } else {
-                builder.append(c);
-            }
-        }
-
-        return builder.toString();
     }
 }
