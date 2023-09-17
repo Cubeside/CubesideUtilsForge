@@ -1,5 +1,6 @@
 package de.iani.cubesideutils.forge.permissions;
 
+import de.iani.cubesideutils.forge.CubesideUtilsForgeMod;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedPermissionData;
 import net.luckperms.api.util.Tristate;
@@ -75,24 +76,44 @@ public class PermissionUtil {
     private static class PermissionUtilImplLuckPerms implements PermissionUtilImpl {
         @Override
         public boolean hasPermission(ServerPlayer player, String permission) {
-            CachedPermissionData permissionData = LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getPermissionData();
-            Tristate result = permissionData.checkPermission(permission);
-            return result == Tristate.UNDEFINED ? player.hasPermissions(2) : result.asBoolean();
+            try {
+                CachedPermissionData permissionData = LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getPermissionData();
+                Tristate result = permissionData.checkPermission(permission);
+                return result == Tristate.UNDEFINED ? player.hasPermissions(2) : result.asBoolean();
+            } catch (Exception e) {
+                CubesideUtilsForgeMod.LOGGER.error("Could not load permission for " + player.getUUID(), e);
+            }
+            return false;
         }
 
         @Override
         public String getPrefix(ServerPlayer player) {
-            return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getPrefix();
+            try {
+                return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getPrefix();
+            } catch (Exception e) {
+                CubesideUtilsForgeMod.LOGGER.error("Could not load permission for " + player.getUUID(), e);
+            }
+            return null;
         }
 
         @Override
         public String getSuffix(ServerPlayer player) {
-            return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getSuffix();
+            try {
+                return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getSuffix();
+            } catch (Exception e) {
+                CubesideUtilsForgeMod.LOGGER.error("Could not load permission for " + player.getUUID(), e);
+            }
+            return null;
         }
 
         @Override
         public String getMetaValue(ServerPlayer player, String key) {
-            return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getMetaValue(key);
+            try {
+                return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getMetaValue(key);
+            } catch (Exception e) {
+                CubesideUtilsForgeMod.LOGGER.error("Could not load permission for " + player.getUUID(), e);
+            }
+            return null;
         }
     }
 }
