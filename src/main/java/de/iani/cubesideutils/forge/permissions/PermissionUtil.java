@@ -37,8 +37,32 @@ public class PermissionUtil {
         return impl.hasPermission(player, permission);
     }
 
+    public static String getPrefix(ServerPlayer player) {
+        return impl.getPrefix(player);
+    }
+
+    public static String getSuffix(ServerPlayer player) {
+        return impl.getSuffix(player);
+    }
+
+    public static String getMetaValue(ServerPlayer player, String key) {
+        return impl.getMetaValue(player, key);
+    }
+
     private static interface PermissionUtilImpl {
         boolean hasPermission(ServerPlayer player, String permission);
+
+        default String getPrefix(ServerPlayer player) {
+            return null;
+        }
+
+        default String getSuffix(ServerPlayer player) {
+            return null;
+        }
+
+        default String getMetaValue(ServerPlayer player, String key) {
+            return null;
+        }
     }
 
     private static class PermissionUtilImplMinecraft implements PermissionUtilImpl {
@@ -54,6 +78,21 @@ public class PermissionUtil {
             CachedPermissionData permissionData = LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getPermissionData();
             Tristate result = permissionData.checkPermission(permission);
             return result == Tristate.UNDEFINED ? player.hasPermissions(2) : result.asBoolean();
+        }
+
+        @Override
+        public String getPrefix(ServerPlayer player) {
+            return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getPrefix();
+        }
+
+        @Override
+        public String getSuffix(ServerPlayer player) {
+            return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getSuffix();
+        }
+
+        @Override
+        public String getMetaValue(ServerPlayer player, String key) {
+            return LuckPermsProvider.get().getPlayerAdapter(ServerPlayer.class).getUser(player).getCachedData().getMetaData().getMetaValue(key);
         }
     }
 }
