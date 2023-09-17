@@ -11,10 +11,13 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
+import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import de.iani.cubesideutils.forge.CubesideUtilsForgeMod;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
@@ -35,6 +38,15 @@ public class CommandUtil {
         CommandAdapter adapter = new CommandAdapter(handler);
         LiteralCommandNode<CommandSourceStack> commandNode = Commands.literal(command).requires(adapter).executes(adapter).build();
         ArgumentCommandNode<CommandSourceStack, String> defaultArgs = RequiredArgumentBuilder.<CommandSourceStack, String> argument("args", StringArgumentType.greedyString()).suggests(adapter).executes(adapter).build();
+        Field childrenField = CommandNode.class.getDeclaredFields().clone()[0]; // Map<String, CommandNode<S>> children
+        try {
+            childrenField.setAccessible(true);
+            Map<?, ?> map = (Map<?, ?>) childrenField.get(dispatcher.getRoot());
+            map.remove(command);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        // commandNode.children.remove(command);
         commandNode.addChild(defaultArgs);
         dispatcher.getRoot().addChild(commandNode);
     }
