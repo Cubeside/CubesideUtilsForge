@@ -7,7 +7,7 @@ import de.iani.cubesideutils.forge.commands.exceptions.NoPermissionException;
 import de.iani.cubesideutils.forge.commands.exceptions.NoPermissionForPathException;
 import de.iani.cubesideutils.forge.commands.exceptions.RequiresPlayerException;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 
 public interface CommandExceptionHandler {
 
@@ -16,26 +16,25 @@ public interface CommandExceptionHandler {
 
     public default int handleDisallowsCommandBlock(DisallowsCommandBlockException thrown) {
         CommandSourceStack sender = thrown.getSender();
-        sender.sendChatMessage(null, false, null);
-        sender.sendFailure(Component.literal(getErrorMessagePrefix() + thrown.getMessage()));
+        sender.sendFailure(new TextComponent(getErrorMessagePrefix() + thrown.getMessage()));
         return 0;
     }
 
     public default int handleRequiresPlayer(RequiresPlayerException thrown) {
         CommandSourceStack sender = thrown.getSender();
-        sender.sendFailure(Component.literal(getErrorMessagePrefix() + thrown.getMessage()));
+        sender.sendFailure(new TextComponent(getErrorMessagePrefix() + thrown.getMessage()));
         return 0;
     }
 
     public default int handleNoPermission(NoPermissionException thrown) {
         CommandSourceStack sender = thrown.getSender();
-        sender.sendFailure(Component.literal(getErrorMessagePrefix() + thrown.getMessage()));
+        sender.sendFailure(new TextComponent(getErrorMessagePrefix() + thrown.getMessage()));
         return 0;
     }
 
     public default int handleNoPermissionForPath(NoPermissionForPathException thrown) {
         CommandSourceStack sender = thrown.getSender();
-        sender.sendFailure(Component.literal(getErrorMessagePrefix() + thrown.getMessage()));
+        sender.sendFailure(new TextComponent(getErrorMessagePrefix() + thrown.getMessage()));
         return 0;
     }
 
@@ -51,7 +50,7 @@ public interface CommandExceptionHandler {
     public default int handleInternalException(InternalCommandException thrown) {
         if (thrown.getMessage() != null) {
             CommandSourceStack sender = thrown.getSender();
-            sender.sendFailure(Component.literal(getErrorMessagePrefix() + thrown.getMessage()));
+            sender.sendFailure(new TextComponent(getErrorMessagePrefix() + thrown.getMessage()));
         }
 
         Throwable cause = thrown.getCause();

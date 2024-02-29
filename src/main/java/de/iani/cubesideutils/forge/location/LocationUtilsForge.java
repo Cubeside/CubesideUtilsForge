@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -49,5 +50,9 @@ public class LocationUtilsForge {
 
     public static Location getPlayerLocation(ServerPlayer player) {
         return new Location(player.getLevel(), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+    }
+
+    public static Location getEntityLocation(Entity entity) {
+        return new Location((ServerLevel) entity.getLevel(), entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
     }
 }

@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BaseCommandBlock;
@@ -179,12 +179,12 @@ public class CommandRouter extends AbstractCommandRouter<SubCommand, CommandSour
                 if (subcmd.executor == null) {
                     // hat weitere subcommands
                     if (isAnySubCommandDisplayable(sender, subcmd)) {
-                        sender.sendSystemMessage(Component.literal(exceptionHandler.getHelpMessagePrefix() + prefix + key + " ..."));
+                        sender.sendSuccess(new TextComponent(exceptionHandler.getHelpMessagePrefix() + prefix + key + " ..."), false);
                     }
                 } else {
                     if (subcmd.executor.hasRequiredPermission(sender) && subcmd.executor.isAvailable(sender)) {
                         if (sender.source instanceof Player || !subcmd.executor.requiresPlayer()) {
-                            sender.sendSystemMessage(Component.literal(exceptionHandler.getHelpMessagePrefix() + prefix + key + " " + subcmd.executor.getUsage(sender)));
+                            sender.sendSuccess(new TextComponent(exceptionHandler.getHelpMessagePrefix() + prefix + key + " " + subcmd.executor.getUsage(sender)), false);
                         }
                     }
                 }
@@ -195,7 +195,7 @@ public class CommandRouter extends AbstractCommandRouter<SubCommand, CommandSour
             if (executor.hasRequiredPermission(sender) && executor.isAvailable(sender)) {
                 String prefix = getCommandString(alias, currentMap);
                 if (sender.source instanceof Player || !executor.requiresPlayer()) {
-                    sender.sendSystemMessage(Component.literal(exceptionHandler.getHelpMessagePrefix() + prefix + executor.getUsage(sender)));
+                    sender.sendSuccess(new TextComponent(exceptionHandler.getHelpMessagePrefix() + prefix + executor.getUsage(sender)), false);
                 }
             }
         }
