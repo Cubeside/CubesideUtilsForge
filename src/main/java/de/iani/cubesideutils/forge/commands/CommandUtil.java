@@ -22,6 +22,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.StringUtils;
 
 public class CommandUtil {
@@ -107,5 +109,21 @@ public class CommandUtil {
             return builder.buildFuture();
         }
 
+    }
+
+    public static boolean executeCommand(CommandSourceStack sender, String command) {
+        Preconditions.checkArgument(sender != null, "sender cannot be null");
+        Preconditions.checkArgument(command != null, "commandLine cannot be null");
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null) {
+            try {
+                server.getCommands().getDispatcher().execute(command, sender);
+                return true;
+            } catch (CommandSyntaxException e) {
+                CubesideUtilsForgeMod.LOGGER.error("Command could not be executed.", e);
+                return false;
+            }
+        }
+        return false;
     }
 }
